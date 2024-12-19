@@ -47,6 +47,11 @@
 <a href="#credits"><img alt="All Contributors" src="https://img.shields.io/static/v1?label=All%20Contributors&message=15&color=162453&style=flat-square&logo=Handshake&logoColor=fff" /></a>
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
     <br/>
+    <!-- CasaOS YouTube -->
+    <a href="https://www.youtube.com/channel/UC2zMrUYT17AJhIl9XWZzT8g" target="_blank">
+        <img alt="YouTube Tutorial Views" src="https://img.shields.io/youtube/channel/views/UC2zMrUYT17AJhIl9XWZzT8g?style=for-the-badge&logo=youtube&logoColor=red&label=YouTube%20Tutorial%20Views" />
+    </a>
+    <br/>
     <!-- CasaOS Links -->
     <a href="https://www.casaos.io" target="_blank">Website</a> |
     <a href="http://demo.casaos.io" target="_blank">Demo</a> |
@@ -83,7 +88,7 @@ Furthermore, the personal cloud could combine personal data to train personalize
 - Multiple hardware and base system support
   - ZimaBoard, NUC, RPi, old computers, whatever is available.
 - Selected apps in the app store, one-click installation
-  - Nextcloud, HomeAssiant, AdGuard, Jellyfin, *arr and more!
+  - Nextcloud, HomeAssistant, AdGuard, Jellyfin, *arr and more!
 - Easily install numerous Docker apps
   - Over 100,000 apps from the Docker ecosystem can be easily installed
 - Elegant drive and file management
@@ -104,7 +109,7 @@ CasaOS fully supports ZimaBoard, Intel NUC, and Raspberry Pi. Also, more compute
 ### System Compatibility
 
 Official Support
-- Debian 11 (✅ Tested, Recommended)
+- Debian 12 (✅ Tested, Recommended)
 - Ubuntu Server 20.04 (✅ Tested)
 - Raspberry Pi OS (✅ Tested)
 
@@ -129,6 +134,30 @@ or
 curl -fsSL https://get.casaos.io | sudo bash
 ```
 
+### Update CasaOS
+
+CasaOS can be updated from the User Interface (UI), via `Settings ... Update`.  
+
+Alternatively it can be updated from a terminal session.  To update from a terminal session, it must be done either from a secure shell (ssh) session to the device or from a directly attached terminal and keyboard to the device running CasaOS, this cannot be done from the terminal via the CasaOS User Interface (UI).  To update to the latest release of CasaOS from a terminal session run this command:
+
+```sh
+wget -qO- https://get.casaos.io/update | sudo bash
+```
+
+or
+
+```sh
+curl -fsSL https://get.casaos.io/update | sudo bash
+```
+
+To determine version of CasaOS from a terminal session run this command:
+
+```sh
+casaos -v
+```
+
+
+
 ### Uninstall CasaOS
 
 
@@ -146,13 +175,13 @@ curl -fsSL https://get.icewhale.io/casaos-uninstall.sh | sudo bash
 
 ## Community 
 
-The word Casa comes from the Spanish word for "home". Project CasaOS originated as a pre-installed system for crowdfunded product [ZimaBoard](https://www.zimaboard.com) on Kickstarter.
+The word Casa comes from the Spanish word for "home". Project CasaOS originated as a pre-installed system for the crowdfunded product [ZimaBoard](https://www.zimaboard.com) on Kickstarter.
 
 After looking at many systems and software on the market, the team found no server system designed for home scenarios, sadly true.
 
-So, we set out to build this open source project to develop CasaOS with our own hands, everyone in the community, and you.
+So, we set out to build this open-source project to develop CasaOS with our own hands, everyone in the community, and you.
 
-We believes that through community-driven collaborative innovation and open communication with global developers, we can reshape the digital home experience like never before.
+We believe that through community-driven collaborative innovation and open communication with global developers, we can reshape the digital home experience like never before.
 
 **A warm welcome for you to get help or share great ideas in the [Discord](https://discord.gg/knqAbbBbeX)!**
 
@@ -162,8 +191,9 @@ We believes that through community-driven collaborative innovation and open comm
 
 CasaOS is a community-driven open source project and the people involved are CasaOS users. That means CasaOS will always need contributions from community members just like you!
 
-- See <https://wiki.casaos.io/en/contribute> for ways of contribution to CasaOS
-- See <https://wiki.casaos.io/en/contribute/development> if you want to be involved in code contribution specificially
+- See <https://wiki.casaos.io/en/contribute> for ways of contributing to CasaOS
+- See <https://wiki.casaos.io/en/contribute/development> if you want to be involved in code contribution specifically
+
 
 ## Credits
 
@@ -195,6 +225,8 @@ Everyone's contribution is greatly appreciated. ([Emoji Key](https://allcontribu
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/llwaini"><img src="https://avatars.githubusercontent.com/u/59589857?v=4?s=100" width="100px;" alt=""/><br /><sub><b>llwaini</b></sub></a><br /><a href="#projectManagement-llwaini" title="Project Management">📆</a> <a href="https://github.com/IceWhaleTech/CasaOS/commits?author=llwaini" title="Tests">⚠️</a> <a href="#tutorial-llwaini" title="Tutorials">✅</a></td>
+    <td align="center"><a href="https://github.com/CorrectRoadH"><img src="https://avatars.githubusercontent.com/u/29306285?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CorrectRoadH</b></sub></a><br /><a href="https://github.com/IceWhaleTech/CasaOS/commits?author=correctroadh" title="Code">💻</a> <a href="https://github.com/IceWhaleTech/CasaOS/commits?author=correctroadh" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/zhanghengxin"><img src="https://avatars.githubusercontent.com/u/24197448?v=4?s=100" width="100px;" alt=""/><br /><sub><b>zhanghengxin</b></sub></a><br /><a href="https://github.com/IceWhaleTech/CasaOS/commits?author=zhanghengxin" title="Code">💻</a> <a href="https://github.com/IceWhaleTech/CasaOS/commits?author=zhanghengxin" title="Documentation">📖</a></td>
   </tr>
 </table>
 
@@ -203,7 +235,7 @@ Everyone's contribution is greatly appreciated. ([Emoji Key](https://allcontribu
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
 ## Changelog
 

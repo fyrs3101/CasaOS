@@ -77,6 +77,22 @@ func RMDir(src string) error {
 	return nil
 }
 
+func RemoveAll(dir string) error {
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			return os.Remove(path)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return os.Remove(dir)
+}
+
 // Open a file according to a specific mode
 func Open(name string, flag int, perm os.FileMode) (*os.File, error) {
 	f, err := os.OpenFile(name, flag, perm)
@@ -163,7 +179,7 @@ func CreateFileAndWriteContent(path string, content string) error {
 	return nil
 }
 
-// IsNotExistMkDir create a directory if it does not exist
+// IsNotExistCreateFile create a file if it does not exist
 func IsNotExistCreateFile(src string) error {
 	if notExist := CheckNotExist(src); notExist {
 		if err := CreateFile(src); err != nil {
@@ -431,7 +447,9 @@ func AddFile(ar archiver.Writer, path, commonPath string) error {
 	defer file.Close()
 
 	if path != commonPath {
-		filename := info.Name()
+		//filename := info.Name()
+		filename := strings.TrimPrefix(path, commonPath)
+		filename = strings.TrimPrefix(filename, string(filepath.Separator))
 		err = ar.Write(archiver.File{
 			FileInfo: archiver.FileInfo{
 				FileInfo:   info,

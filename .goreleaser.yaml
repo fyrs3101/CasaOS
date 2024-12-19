@@ -19,6 +19,12 @@ builds:
     ldflags:
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_id={{.Env.GoogleID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_secret={{.Env.GoogleSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_id={{.Env.OneDriveID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_secret={{.Env.OneDriveSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_key={{.Env.DropboxKey}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_secret={{.Env.DropboxSecret}}
       - -s
       - -w
       - -extldflags "-static"
@@ -32,14 +38,20 @@ builds:
       - amd64
   - id: casaos-arm64
     binary: build/sysroot/usr/bin/casaos
-    hooks:
-      post:
-        - upx --best --lzma -v --no-progress "{{ .Path }}"
+    # hooks:
+    #   post:
+    #     - upx --best --lzma -v --no-progress "{{ .Path }}"
     env:
       - CC=aarch64-linux-gnu-gcc
     ldflags:
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_id={{.Env.GoogleID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_secret={{.Env.GoogleSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_id={{.Env.OneDriveID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_secret={{.Env.OneDriveSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_key={{.Env.DropboxKey}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_secret={{.Env.DropboxSecret}}
       - -s
       - -w
       - -extldflags "-static"
@@ -61,6 +73,12 @@ builds:
     ldflags:
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_id={{.Env.GoogleID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/google_drive.client_secret={{.Env.GoogleSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_id={{.Env.OneDriveID}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/onedrive.client_secret={{.Env.OneDriveSecret}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_key={{.Env.DropboxKey}}
+      - -X github.com/IceWhaleTech/CasaOS/drivers/dropbox.app_secret={{.Env.DropboxSecret}}
       - -s
       - -w
       - -extldflags "-static"
@@ -98,9 +116,9 @@ builds:
       - amd64
   - id: casaos-migration-tool-arm64
     binary: build/sysroot/usr/bin/casaos-migration-tool
-    hooks:
-      post:
-        - upx --best --lzma -v --no-progress "{{ .Path }}"
+    # hooks:
+    #   post:
+    #     - upx --best --lzma -v --no-progress "{{ .Path }}"
     main: ./cmd/migration-tool
     env:
       - CC=aarch64-linux-gnu-gcc
@@ -143,24 +161,22 @@ builds:
     goarm:
       - "7"
 archives:
-  - name_template: "{{ .Os }}-{{ .Arch }}-{{ .ProjectName }}-v{{ .Version }}"
+  - name_template:  >- 
+      {{ .Os }}-{{- if eq .Arch "arm" }}arm-7{{- else }}{{ .Arch }}{{- end }}-{{ .ProjectName }}-v{{ .Version }}
     id: casaos
     builds:
       - casaos-amd64
       - casaos-arm64
       - casaos-arm-7
-    replacements:
-      arm: arm-7
     files:
       - build/**/*
-  - name_template: "{{ .Os }}-{{ .Arch }}-{{ .ProjectName }}-migration-tool-v{{ .Version }}"
+  - name_template: >-
+      {{ .Os }}-{{- if eq .Arch "arm" }}arm-7{{- else }}{{ .Arch }}{{- end }}-{{ .ProjectName }}-migration-tool-v{{ .Version }}
     id: casaos-migration-tool
     builds:
       - casaos-migration-tool-amd64
       - casaos-migration-tool-arm64
       - casaos-migration-tool-arm-7
-    replacements:
-      arm: arm-7
     files:
       - build/sysroot/etc/**/*
 checksum:

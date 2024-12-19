@@ -30,7 +30,6 @@ var (
 	V2APIPath  string
 	V2DocPath  string
 	V3FilePath string
-	V4DirPath  string
 )
 
 func init() {
@@ -49,7 +48,6 @@ func init() {
 	V2APIPath = strings.TrimRight(u.Path, "/")
 	V2DocPath = "/doc" + V2APIPath
 	V3FilePath = "/v3/file"
-	V4DirPath = "/v4/dir"
 }
 
 func InitV2Router() http.Handler {
@@ -76,10 +74,6 @@ func InitV2Router() http.Handler {
 			// return true
 		},
 		ParseTokenFunc: func(token string, c echo.Context) (interface{}, error) {
-			// claims, code := jwt.Validate(token) // TODO - needs JWT validation
-			// if code != common_err.SUCCESS {
-			// 	return nil, echo.ErrUnauthorized
-			// }
 			valid, claims, err := jwt.Validate(token, func() (*ecdsa.PublicKey, error) { return external.GetPublicKey(config.CommonInfo.RuntimePath) })
 			if err != nil || !valid {
 				return nil, echo.ErrUnauthorized
@@ -89,8 +83,11 @@ func InitV2Router() http.Handler {
 			return claims, nil
 		},
 		TokenLookupFuncs: []echo_middleware.ValuesExtractor{
-			func(c echo.Context) ([]string, error) {
-				return []string{c.Request().Header.Get(echo.HeaderAuthorization)}, nil
+			func(ctx echo.Context) ([]string, error) {
+				if len(ctx.Request().Header.Get(echo.HeaderAuthorization)) > 0 {
+					return []string{ctx.Request().Header.Get(echo.HeaderAuthorization)}, nil
+				}
+				return []string{ctx.QueryParam("token")}, nil
 			},
 		},
 	}))
@@ -118,6 +115,12 @@ func InitV2Router() http.Handler {
 	// })
 
 	e.Use(middleware.OapiRequestValidatorWithOptions(_swagger, &middleware.Options{
+		Skipper: func(c echo.Context) bool {
+			// jump validate when upload file
+			// because file upload can't pass validate
+			// issue: https://github.com/deepmap/oapi-codegen/issues/514
+			return strings.Contains(c.Request().Header[echo.HeaderContentType][0], "multipart/form-data")
+		},
 		Options: openapi3filter.Options{AuthenticationFunc: openapi3filter.NoopAuthenticationFunc},
 	}))
 
@@ -145,15 +148,46 @@ func InitV2DocRouter(docHTML string, docYAML string) http.Handler {
 
 func InitFile() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.URL.Query().Get("token")
+		if len(token) == 0 {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"message": "token not found"}`))
+			return
+		}
+
+		valid, _, errs := jwt.Validate(token, func() (*ecdsa.PublicKey, error) { return external.GetPublicKey(config.CommonInfo.RuntimePath) })
+		if errs != nil || !valid {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"message": "validation failure"}`))
+			return
+		}
 		filePath := r.URL.Query().Get("path")
 		fileName := path.Base(filePath)
 		w.Header().Add("Content-Disposition", "attachment; filename*=utf-8''"+url.PathEscape(fileName))
 		http.ServeFile(w, r, filePath)
+		// http.ServeFile(w, r, filePath)
 	})
 }
 
 func InitDir() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.URL.Query().Get("token")
+		if len(token) == 0 {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"message": "token not found"}`))
+			return
+		}
+
+		valid, _, errs := jwt.Validate(token, func() (*ecdsa.PublicKey, error) { return external.GetPublicKey(config.CommonInfo.RuntimePath) })
+		if errs != nil || !valid {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"message": "validation failure"}`))
+			return
+		}
 		t := r.URL.Query().Get("format")
 		files := r.URL.Query().Get("files")
 
@@ -167,7 +201,7 @@ func InitDir() http.Handler {
 		list := strings.Split(files, ",")
 		for _, v := range list {
 			if !file.Exists(v) {
-				// c.JSON(common_err.SERVICE_ERROR, model.Result{
+				// return ctx.JSON(common_err.SERVICE_ERROR, model.Result{
 				// 	Success: common_err.FILE_DOES_NOT_EXIST,
 				// 	Message: common_err.GetMsg(common_err.FILE_DOES_NOT_EXIST),
 				// })
@@ -203,7 +237,7 @@ func InitDir() http.Handler {
 
 		err = ar.Create(w)
 		if err != nil {
-			//  c.JSON(common_err.SERVICE_ERROR, model.Result{
+			//  return ctx.JSON(common_err.SERVICE_ERROR, model.Result{
 			// 	Success: common_err.SERVICE_ERROR,
 			// 	Message: common_err.GetMsg(common_err.SERVICE_ERROR),
 			// 	Data:    err.Error(),
